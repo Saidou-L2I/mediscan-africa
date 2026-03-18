@@ -1,0 +1,250 @@
+{% extends "base.html" %}
+{% block title %}
+    {% if scenario == "diabete" %}Diagnostic Diabete{% else %}Diagnostic Cancer du Sein{% endif %}
+{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        {% if scenario == "diabete" %}
+        <div class="card border-0 shadow">
+            <div class="card-header text-white" style="background:linear-gradient(135deg,#f59e0b,#f97316)">
+                <h4 class="mb-0"><i class="bi bi-droplet-fill me-2"></i>Diagnostic - Diabete Type 2</h4>
+                <small>Remplissez tous les champs pour obtenir une prediction IA</small>
+            </div>
+            <div class="card-body p-4">
+                <form id="diagForm">
+                    <input type="hidden" name="scenario" value="diabete">
+
+                    <h6 class="text-muted mb-3 border-bottom pb-2">Informations Patient</h6>
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Nom fictif / Code Patient</label>
+                            <input type="text" class="form-control" name="nom" placeholder="Ex: Patient-001" required>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label fw-semibold">Age</label>
+                            <input type="number" class="form-control" name="age" min="18" max="100" required>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label fw-semibold">Sexe</label>
+                            <select class="form-select" name="sexe">
+                                <option value="F">F</option>
+                                <option value="M">M</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label fw-semibold">Region</label>
+                            <input type="text" class="form-control" name="region" placeholder="Dakar">
+                        </div>
+                    </div>
+
+                    <h6 class="text-muted mb-3 border-bottom pb-2">Parametres Cliniques</h6>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Nombre de grossesses <span class="text-muted fw-normal">(femmes)</span></label>
+                            <input type="number" class="form-control" name="pregnancies" min="0" max="20" value="0">
+                            <div class="form-text">0 pour les hommes</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Glycemie (mg/dL)</label>
+                            <input type="number" class="form-control" name="glucose" min="50" max="300" step="0.1" required>
+                            <div class="form-text">Normale : 70-100 mg/dL a jeun</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Pression arterielle (mm Hg)</label>
+                            <input type="number" class="form-control" name="blood_pressure" min="40" max="200" step="0.1" required>
+                            <div class="form-text">Normale : 60-80 mm Hg (diastolique)</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Epaisseur du pli cutane (mm)</label>
+                            <input type="number" class="form-control" name="skin_thickness" min="0" max="100" step="0.1" value="20">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Insuline (mu U/mL)</label>
+                            <input type="number" class="form-control" name="insulin" min="0" max="900" step="0.1" value="80">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">IMC (kg/m2)</label>
+                            <input type="number" class="form-control" name="bmi" min="10" max="70" step="0.1" required>
+                            <div class="form-text">Normal : 18.5 - 24.9</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Pedigree diabetique</label>
+                            <input type="number" class="form-control" name="diabetes_pedigree" min="0" max="3" step="0.001" value="0.5">
+                            <div class="form-text">Historique familial (0 - 3.0)</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Age du patient</label>
+                            <input type="number" class="form-control" name="age_feature" min="18" max="100" required>
+                        </div>
+                    </div>
+
+                    <div class="d-grid mt-4">
+                        <button type="submit" class="btn btn-warning btn-lg text-white fw-bold">
+                            <i class="bi bi-cpu me-2"></i>Analyser avec l'IA
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        {% else %}
+        <div class="card border-0 shadow">
+            <div class="card-header text-white" style="background:linear-gradient(135deg,#dc3545,#c2185b)">
+                <h4 class="mb-0"><i class="bi bi-activity me-2"></i>Diagnostic - Cancer du Sein</h4>
+                <small>Caracteristiques cellulaires issues de l'analyse microscopique</small>
+            </div>
+            <div class="card-body p-4">
+                <form id="diagForm">
+                    <input type="hidden" name="scenario" value="cancer_sein">
+
+                    <h6 class="text-muted mb-3 border-bottom pb-2">Informations Patient</h6>
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold">Nom fictif / Code Patient</label>
+                            <input type="text" class="form-control" name="nom" placeholder="Ex: Patient-002" required>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label fw-semibold">Age</label>
+                            <input type="number" class="form-control" name="age" min="18" max="100" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label fw-semibold">Region</label>
+                            <input type="text" class="form-control" name="region" placeholder="Abidjan">
+                        </div>
+                    </div>
+
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle me-2"></i>
+                        <strong>Source des donnees :</strong> Valeurs issues de l'analyse microscopique d'une biopsie a l'aiguille fine (FNA).
+                    </div>
+
+                    <h6 class="text-muted mb-3 border-bottom pb-2">Caracteristiques de la Tumeur (valeurs moyennes)</h6>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Rayon moyen (mm)</label>
+                            <input type="number" class="form-control" name="radius_mean" min="6" max="30" step="0.01" value="14.0" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Texture moyenne</label>
+                            <input type="number" class="form-control" name="texture_mean" min="9" max="40" step="0.01" value="18.0" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Perimetre moyen (mm)</label>
+                            <input type="number" class="form-control" name="perimeter_mean" min="40" max="200" step="0.01" value="90.0" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Aire moyenne (mm2)</label>
+                            <input type="number" class="form-control" name="area_mean" min="150" max="2500" step="0.01" value="600.0" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Lissite moyenne</label>
+                            <input type="number" class="form-control" name="smoothness_mean" min="0.05" max="0.17" step="0.001" value="0.095">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Compacite moyenne</label>
+                            <input type="number" class="form-control" name="compactness_mean" min="0.02" max="0.35" step="0.001" value="0.10">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Concavite moyenne</label>
+                            <input type="number" class="form-control" name="concavity_mean" min="0" max="0.5" step="0.001" value="0.08">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Points concaves moyens</label>
+                            <input type="number" class="form-control" name="concave_points_mean" min="0" max="0.2" step="0.001" value="0.04">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Symetrie moyenne</label>
+                            <input type="number" class="form-control" name="symmetry_mean" min="0.1" max="0.3" step="0.001" value="0.18">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Dimension fractale moyenne</label>
+                            <input type="number" class="form-control" name="fractal_dimension_mean" min="0.04" max="0.1" step="0.0001" value="0.063">
+                        </div>
+                    </div>
+
+                    <div class="d-grid mt-4">
+                        <button type="submit" class="btn btn-danger btn-lg fw-bold">
+                            <i class="bi bi-cpu me-2"></i>Analyser avec l'IA
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Loading overlay -->
+        <div id="loadingOverlay" class="d-none text-center p-4">
+            <div class="spinner-border text-primary" style="width:3rem;height:3rem"></div>
+            <p class="mt-3 text-muted">Analyse en cours par l'IA...</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+const scenario = "{{ scenario }}";
+document.getElementById("diagForm").addEventListener("submit", async function(e) {
+    e.preventDefault();
+    const form = e.target;
+    const overlay = document.getElementById("loadingOverlay");
+    form.classList.add("d-none");
+    overlay.classList.remove("d-none");
+
+    const fd = new FormData(form);
+    const patient = {
+        nom: fd.get("nom") || "Anonyme",
+        age: fd.get("age") || 30,
+        sexe: fd.get("sexe") || "M",
+        region: fd.get("region") || "Non specifiee"
+    };
+
+    let features = {};
+    if (scenario === "diabete") {
+        features = {
+            pregnancies: parseFloat(fd.get("pregnancies")) || 0,
+            glucose: parseFloat(fd.get("glucose")),
+            blood_pressure: parseFloat(fd.get("blood_pressure")),
+            skin_thickness: parseFloat(fd.get("skin_thickness")) || 20,
+            insulin: parseFloat(fd.get("insulin")) || 80,
+            bmi: parseFloat(fd.get("bmi")),
+            diabetes_pedigree: parseFloat(fd.get("diabetes_pedigree")) || 0.5,
+            age: parseFloat(fd.get("age_feature") || fd.get("age"))
+        };
+    } else {
+        features = {
+            radius_mean: parseFloat(fd.get("radius_mean")),
+            texture_mean: parseFloat(fd.get("texture_mean")),
+            perimeter_mean: parseFloat(fd.get("perimeter_mean")),
+            area_mean: parseFloat(fd.get("area_mean")),
+            smoothness_mean: parseFloat(fd.get("smoothness_mean")),
+            compactness_mean: parseFloat(fd.get("compactness_mean")),
+            concavity_mean: parseFloat(fd.get("concavity_mean")),
+            concave_points_mean: parseFloat(fd.get("concave_points_mean")),
+            symmetry_mean: parseFloat(fd.get("symmetry_mean")),
+            fractal_dimension_mean: parseFloat(fd.get("fractal_dimension_mean"))
+        };
+    }
+
+    try {
+        const res = await fetch("/api/diagnostic", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({scenario, patient, features})
+        });
+        const data = await res.json();
+        if (data.error) {
+            alert("Erreur : " + data.error);
+            form.classList.remove("d-none");
+            overlay.classList.add("d-none");
+        } else {
+            window.location.href = "/results/" + data.consultation_id;
+        }
+    } catch(err) {
+        alert("Erreur reseau : " + err.message);
+        form.classList.remove("d-none");
+        overlay.classList.add("d-none");
+    }
+});
+</script>
+{% endblock %}

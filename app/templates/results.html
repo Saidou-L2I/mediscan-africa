@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+{% block title %}Resultats - Consultation #{{ consultation.id }}{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        {% set pct = (consultation.score_risque * 100) | round(1) %}
+        {% if consultation.gravite == "urgent" %}
+            {% set color = "danger" %}
+            {% set icon = "exclamation-triangle-fill" %}
+        {% elif consultation.gravite == "differabe" %}
+            {% set color = "warning" %}
+            {% set icon = "exclamation-circle-fill" %}
+        {% else %}
+            {% set color = "success" %}
+            {% set icon = "check-circle-fill" %}
+        {% endif %}
+
+        <div class="card border-0 shadow-lg mb-4">
+            <div class="card-header bg-{{ color }} text-white p-4">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h4 class="mb-1"><i class="bi bi-{{ icon }} me-2"></i>Resultats du Diagnostic</h4>
+                        <small>Consultation #{{ consultation.id }} - {{ consultation.date_consultation.strftime("%d/%m/%Y a %H:%M") }}</small>
+                    </div>
+                    <div class="text-center">
+                        <div class="display-6 fw-bold">{{ (consultation.score_risque * 1000) | int }}</div>
+                        <small>/ 1000</small>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body p-4">
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <h6 class="text-muted">Diagnostic principal</h6>
+                        <p class="fw-bold fs-5">{{ consultation.diagnostic_principal }}</p>
+
+                        <h6 class="text-muted mt-3">Diagnostic simple</h6>
+                        {% if consultation.score_risque >= 0.5 %}
+                            <span class="badge bg-danger fs-6 px-3 py-2">MALADIE DETECTEE</span>
+                        {% else %}
+                            <span class="badge bg-success fs-6 px-3 py-2">PAS DE MALADIE DETECTEE</span>
+                        {% endif %}
+
+                        <h6 class="text-muted mt-3">Gravite</h6>
+                        {% if consultation.gravite == "urgent" %}
+                            <span class="badge bg-danger fs-6 px-3 py-2">URGENT</span>
+                        {% elif consultation.gravite == "differabe" %}
+                            <span class="badge bg-warning text-dark fs-6 px-3 py-2">DIFFERABE</span>
+                        {% else %}
+                            <span class="badge bg-success fs-6 px-3 py-2">SURVEILLANCE</span>
+                        {% endif %}
+
+                        <h6 class="text-muted mt-3">Probabilite de risque</h6>
+                        <div class="progress" style="height:25px">
+                            <div class="progress-bar bg-{{ color }}" style="width:{{ pct }}%">
+                                <span class="fw-bold">{{ pct }}%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <h6 class="text-muted">Patient</h6>
+                        <p class="mb-1"><strong>Nom :</strong> {{ patient.nom_fictif }}</p>
+                        <p class="mb-1"><strong>Age :</strong> {{ patient.age }} ans</p>
+                        <p class="mb-1"><strong>Sexe :</strong> {{ patient.sexe }}</p>
+                        <p class="mb-1"><strong>Region :</strong> {{ patient.region_anonymisee }}</p>
+
+                        <h6 class="text-muted mt-3">Scenario</h6>
+                        {% if consultation.scenario_type == "diabete" %}
+                            <span class="badge bg-warning text-dark">Diabete Type 2</span>
+                        {% else %}
+                            <span class="badge bg-danger">Cancer du Sein</span>
+                        {% endif %}
+                    </div>
+
+                    <div class="col-12">
+                        <div class="alert alert-{{ color }} border-{{ color }}">
+                            <h6 class="alert-heading"><i class="bi bi-clipboard2-pulse me-2"></i>Recommandations</h6>
+                            <p class="mb-0">{{ consultation.recommandations }}</p>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <h6 class="text-muted">Parametres saisis</h6>
+                        <div class="table-responsive">
+                            <table class="table table-sm table-bordered">
+                                <thead class="table-light">
+                                    <tr><th>Parametre</th><th>Valeur</th></tr>
+                                </thead>
+                                <tbody>
+                                    {% for key, val in consultation.get_symptomes().items() %}
+                                    <tr><td>{{ key }}</td><td>{{ val }}</td></tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex gap-2 mt-3">
+                    <a href="{{ url_for('main.index') }}" class="btn btn-outline-secondary">
+                        <i class="bi bi-house me-1"></i>Accueil
+                    </a>
+                    <a href="{{ url_for('main.diagnostic_form', scenario=consultation.scenario_type) }}" class="btn btn-primary">
+                        <i class="bi bi-plus-circle me-1"></i>Nouveau diagnostic
+                    </a>
+                    <button onclick="window.print()" class="btn btn-outline-dark ms-auto">
+                        <i class="bi bi-printer me-1"></i>Imprimer
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

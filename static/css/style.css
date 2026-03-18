@@ -1,0 +1,23 @@
+body {
+    font-family: "Segoe UI", Roboto, sans-serif;
+    background-color: #f8f9fa;
+}
+.navbar-brand {
+    font-size: 1.4rem;
+}
+.card {
+    transition: transform .2s, box-shadow .2s;
+}
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,0,0,.10) !important;
+}
+.hero-banner {
+    min-height: 200px;
+}
+.progress {
+    border-radius: 50px;
+}
+@media print {
+    .navbar, footer, .btn, nav { display: none !important; }
+}
