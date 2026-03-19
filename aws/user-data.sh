@@ -9,7 +9,8 @@ yum install -y python3 python3-pip git nginx
 pip3 install virtualenv
 
 cd /opt
-git clone https://github.com/VOTRE_USERNAME/mediscan-africa.git
+#==le repo github===
+git clone https://github.com/Saidou-L2I/mediscan-africa.git
 cd mediscan-africa
 
 python3 -m virtualenv venv
@@ -19,7 +20,7 @@ pip install gunicorn psycopg2-binary
 
 cat > /etc/environment <<EOF
 SECRET_KEY="votre-secret-key-production"
-DATABASE_URL="postgresql://mediscanadmin:MotDePasse123!@VOTRE_RDS_ENDPOINT:5432/mediscan"
+DATABASE_URL="postgresql://mediscanadmin:mediscan#2026@VOTRE_RDS_ENDPOINT:5432/mediscan"
 FLASK_ENV="production"
 S3_BUCKET="mediscan-africa-models"
 EOF
