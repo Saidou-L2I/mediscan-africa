@@ -23,8 +23,8 @@
 
 1. Creer un compte AWS sur https://aws.amazon.com
 2. Activer la region us-east-1 (moins chere)
-3. Installer AWS CLI : pip install awscli
-4. Configurer : aws configure
+3. Installer AWS CLI (optionnel si vous utilisez la console) : pip install awscli
+4. Recommande : utiliser un role IAM pour l'instance EC2 (pas de cles d'acces hard codees)
 
 ---
 
@@ -51,7 +51,7 @@ Via la console AWS :
 5. DB instance : db.t3.micro
 6. DB name : mediscan
 7. Master user : mediscanadmin
-8. Password : MediScan2024!
+8. Password : definir un mot de passe fort (ne pas l'ecrire en dur dans le code)
 9. Storage : 20 GB gp2
 10. Public access : No
 11. Security group : creer "mediscan-rds-sg"
@@ -81,9 +81,9 @@ Via la console AWS :
    - Inbound : HTTPS 443 from 0.0.0.0/0
    - Inbound : SSH 22 from MY IP
 7. Storage : 8 GB gp2 (gratuit)
-8. User data : coller le contenu de aws/user-data.sh
-   (Modifier DATABASE_URL avec votre endpoint RDS !)
-9. Launch instance
+8. Role IAM : attacher un role avec permissions SSM (GetParameter + KMS Decrypt) et S3
+9. User data : coller le contenu de aws/user-data.sh
+10. Launch instance
 
 ---
 
@@ -116,10 +116,15 @@ Ouvrir : http://VOTRE-IP-PUBLIQUE
 
 ## ETAPE 8 - Modifier user-data.sh AVANT le deploiement
 
-Remplacer ces valeurs dans aws/user-data.sh :
-- VOTRE_RDS_ENDPOINT : endpoint copie a l'etape 3
-- VOTRE_USERNAME : votre nom d'utilisateur GitHub
-- votre-secret-key-production : une chaine aleatoire longue
+Creer les parametres SSM (SecureString pour les secrets) :
+- /mediscan/SECRET_KEY
+- /mediscan/DATABASE_URL
+- /mediscan/S3_BUCKET
+
+Exemple (AWS CLI ou CloudShell) :
+    aws ssm put-parameter --name "/mediscan/SECRET_KEY" --type "SecureString" --value "..." --overwrite
+    aws ssm put-parameter --name "/mediscan/DATABASE_URL" --type "SecureString" --value "postgresql://user:pass@endpoint:5432/mediscan" --overwrite
+    aws ssm put-parameter --name "/mediscan/S3_BUCKET" --type "String" --value "mediscan-africa-models" --overwrite
 
 ---
 
@@ -198,7 +203,7 @@ def lambda_handler(event, context):
 [ ] Lambda creee et testee
 [ ] CloudWatch logs/alertes ok
 [ ] Security groups configures
-[ ] user-data.sh modifie avec les bons endpoints
+[ ] Parametres SSM crees pour les secrets et variables
 [ ] Application accessible via HTTP
 [ ] Modeles ML entraines (cliquer Entrainer IA)
 [ ] Alerte facturation configuree a 5$
