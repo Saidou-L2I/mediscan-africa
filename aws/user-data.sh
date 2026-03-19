@@ -20,7 +20,7 @@ pip install gunicorn psycopg2-binary
 
 cat > /etc/environment <<EOF
 SECRET_KEY="votre-secret-key-production"
-DATABASE_URL="postgresql://mediscanadmin:mediscan#2026@VOTRE_RDS_ENDPOINT:5432/mediscan"
+DATABASE_URL="postgresql://mediscanadmin:mediscan\#2026@VOTRE_RDS_ENDPOINT:5432/mediscan"
 FLASK_ENV="production"
 S3_BUCKET="mediscan-africa-models"
 EOF
