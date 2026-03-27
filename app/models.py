@@ -3,6 +3,7 @@ from datetime import datetime
 import json
 
 class Patient(db.Model):
+    __tablename__ = "patients_fictifs"
     id = db.Column(db.Integer, primary_key=True)
     nom_fictif = db.Column(db.String(100), nullable=False)
     age = db.Column(db.Integer, nullable=False)
@@ -23,9 +24,11 @@ class Patient(db.Model):
 
 
 class Consultation(db.Model):
+    __tablename__ = "consultations"
+
     id = db.Column(db.Integer, primary_key=True)
-    patient_id = db.Column(db.Integer, db.ForeignKey("patient.id"), nullable=False)
-    date_consultation = db.Column(db.DateTime, default=datetime.utcnow)
+    patient_id = db.Column(db.Integer, db.ForeignKey("patients_fictifs.id"), nullable=False)
+    date_consultation = db.Column("date", db.DateTime, default=datetime.utcnow)
     scenario_type = db.Column(db.String(50), nullable=False)
     symptomes_json = db.Column(db.Text, nullable=False)
     score_risque = db.Column(db.Float, nullable=False)
@@ -54,6 +57,7 @@ class Consultation(db.Model):
 
 
 class ModeleHistorique(db.Model):
+    __tablename__ = "modeles_historique"
     id = db.Column(db.Integer, primary_key=True)
     version = db.Column(db.String(20), nullable=False)
     scenario_type = db.Column(db.String(50), nullable=False)

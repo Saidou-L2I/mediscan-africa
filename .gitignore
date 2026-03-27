@@ -8,7 +8,6 @@ env/
 *.sqlite3
 static/models/*.pkl
 *.pem
-.aws/
 *.log
 .DS_Store
 instance/
