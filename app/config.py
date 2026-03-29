@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 from dotenv import load_dotenv
 
 # Charge le .env local si present (utile pour dev local)
@@ -14,6 +15,7 @@ def _get_env(name, default=None, required=False):
 
 FLASK_ENV = _get_env("FLASK_ENV", default="development")
 IS_PROD = FLASK_ENV.lower() == "production"
+BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 class Config:
@@ -28,5 +30,22 @@ class Config:
 
     SQLALCHEMY_DATABASE_URI = _get_env("DATABASE_URL", required=True)
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    SQLALCHEMY_ENGINE_OPTIONS = {}
+
+    if SQLALCHEMY_DATABASE_URI.startswith("mysql+pymysql://"):
+        SQLALCHEMY_ENGINE_OPTIONS = {
+            "connect_args": {
+                "connect_timeout": 5,
+                "read_timeout": 5,
+                "write_timeout": 5,
+            }
+        }
 
     MODELS_LOCAL_DIR = _get_env("MODELS_LOCAL_DIR", default=None)
+
+
+if Config.SQLALCHEMY_DATABASE_URI.startswith("sqlite:///"):
+    sqlite_path = Config.SQLALCHEMY_DATABASE_URI.removeprefix("sqlite:///")
+    resolved_sqlite_path = (BASE_DIR / sqlite_path).resolve()
+    resolved_sqlite_path.parent.mkdir(parents=True, exist_ok=True)
+    Config.SQLALCHEMY_DATABASE_URI = f"sqlite:///{resolved_sqlite_path.as_posix()}"

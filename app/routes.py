@@ -9,6 +9,62 @@ from app.models import Consultation, Patient
 bp = Blueprint("main", __name__)
 
 
+FEATURE_LABELS = {
+    "diabete": {
+        "pregnancies": "Nombre de grossesses",
+        "glucose": "Glycemie (mg/dL)",
+        "blood_pressure": "Pression arterielle (mm Hg)",
+        "skin_thickness": "Epaisseur du pli cutane (mm)",
+        "insulin": "Insuline (mu U/mL)",
+        "bmi": "IMC (kg/m2)",
+        "diabetes_pedigree": "Pedigree diabetique",
+        "age": "Age du patient",
+        "age_feature": "Age du patient",
+    },
+    "cancer_sein": {
+        "radius_mean": "Rayon moyen",
+        "texture_mean": "Texture moyenne",
+        "perimeter_mean": "Perimetre moyen",
+        "area_mean": "Aire moyenne",
+        "smoothness_mean": "Lissite moyenne",
+        "compactness_mean": "Compacite moyenne",
+        "concavity_mean": "Concavite moyenne",
+        "concave_points_mean": "Points concaves moyens",
+        "symmetry_mean": "Symetrie moyenne",
+        "fractal_dimension_mean": "Dimension fractale moyenne",
+        "radius_se": "Rayon SE",
+        "texture_se": "Texture SE",
+        "perimeter_se": "Perimetre SE",
+        "area_se": "Aire SE",
+        "smoothness_se": "Lissite SE",
+        "compactness_se": "Compacite SE",
+        "concavity_se": "Concavite SE",
+        "concave_points_se": "Points concaves SE",
+        "symmetry_se": "Symetrie SE",
+        "fractal_dimension_se": "Dimension fractale SE",
+        "radius_worst": "Rayon max",
+        "texture_worst": "Texture max",
+        "perimeter_worst": "Perimetre max",
+        "area_worst": "Aire max",
+        "smoothness_worst": "Lissite max",
+        "compactness_worst": "Compacite max",
+        "concavity_worst": "Concavite max",
+        "concave_points_worst": "Points concaves max",
+        "symmetry_worst": "Symetrie max",
+        "fractal_dimension_worst": "Dimension fractale max",
+    },
+}
+
+
+def _format_feature_rows(scenario: str, features: dict) -> list[dict]:
+    labels = FEATURE_LABELS.get(scenario, {})
+    rows = []
+    for key, value in features.items():
+        label = labels.get(key, key.replace("_", " ").capitalize())
+        rows.append({"key": key, "label": label, "value": value})
+    return rows
+
+
 def _predict_by_scenario(scenario: str, features: dict) -> tuple[dict, str]:
     if scenario == "diabete":
         result = predict_diabetes(features)
@@ -152,7 +208,13 @@ def stats_aggregees():
 def results(consultation_id):
     consultation = Consultation.query.get_or_404(consultation_id)
     patient = Patient.query.get(consultation.patient_id)
-    return render_template("results.html", consultation=consultation, patient=patient)
+    feature_rows = _format_feature_rows(consultation.scenario_type, consultation.get_symptomes())
+    return render_template(
+        "results.html",
+        consultation=consultation,
+        patient=patient,
+        feature_rows=feature_rows,
+    )
 
 
 @bp.route("/historique")

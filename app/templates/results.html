@@ -88,8 +88,8 @@
                                     <tr><th>Parametre</th><th>Valeur</th></tr>
                                 </thead>
                                 <tbody>
-                                    {% for key, val in consultation.get_symptomes().items() %}
-                                    <tr><td>{{ key }}</td><td>{{ val }}</td></tr>
+                                    {% for item in feature_rows %}
+                                    <tr><td>{{ item.label }}</td><td>{{ item.value }}</td></tr>
                                     {% endfor %}
                                 </tbody>
                             </table>
